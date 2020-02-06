@@ -77,4 +77,49 @@ grep -c ">" Y55_JRIF00000000_SGD_cds.fsa > counted_orfs_Y55
 # Calculated using the <grep -c ">" > command, since each ORF is preceeded by a ">" in the file. For the reference, the same approach was used;
 grep -c ">" orf_coding_all_R64-2-1_20150113.fasta > reference_orf_number 
 
-# Given a total of 6713 ORFs upon using cat reference_orf_number 
+# Given a total of 6713 ORFs upon using <cat reference_orf_number>
+
+# Task 3c
+# Once again using the fact that ORFs are shown by the ">" character, we now want to isolate the strings following this command, eg >YAL2222, where YAL2222 is the name of an ORF. To find the matching ORFs of the Y55 and S288C strain, we start by extracting the ORF-names from the strain-suffixes in the Y55 suffix. This is done by considering the syntax of the header; ">ORF_STRAIN.....":
+
+grep ">" Y55_JRIF00000000_SGD_cds.fsa | sed 's/_.*//' | grep -v "UNDEF" |sort > ORF_list_Y55
+
+# where the lines mathing the > are first collected, and the command is used to select the string according to match our purposes. Here, the <sed 's/_.*//' > command was used to extract only strings matching the criteria of ">ORF", which is achieved by selecting strings starting with ">" and continue to extract charcters until the "_" is reached since no ORF-information comes after that. This is achieved by including the <s/_.*/> in the command.  To check the result, the:
+
+head -10 ORF_list_Y55
+# gave: 
+>AAS52177
+>CAY67352
+>CAY67657
+>YAL002W
+>YAL003W
+>YAL005C
+>YAL007C
+>YAL008W
+>YAL009W
+>YAL010C
+
+# which is what we wanted.
+
+# NOTE: All the Undefined ORFs (UNDEF) were discarded using the inverse grep, since these will not match the coding reference anyhow. 
+
+# After getting the ORFs from the Y55 strain, one can use a similar approach to extract only the ORFs. Here, the syntax is ">ORF *blank*". No effective way of including the blank in the "sed-argument" was found, so an alternative method using cut only look at the first column (with the ORF), and the -f command which select fields without the so called "delimiter character", which in this case was specified to be the blank = " ". I therefore used the following command to extract only the ORFs:
+
+grep ">" orf_coding_all_R64-2-1_20150113.fasta | cut -f 1 --delimiter=" " | sort > ORFS_list_reference
+
+# where the top 10 values from <head -10> gave the expected format. 
+>Q0010
+>Q0017
+>Q0032
+>Q0045
+>Q0050
+>Q0055
+>Q0060
+>Q0065
+>Q0070
+>Q0075
+
+# Using comm, and removing the 1st and 2nd output using -12, the number of matched, intersected lines were counted:
+comm -12 ORF_list_Y55 ORFS_list_reference | wc -l 
+
+# which gave a total of 5168 ORFS in the Y55 strain being found in the S288C reference.
