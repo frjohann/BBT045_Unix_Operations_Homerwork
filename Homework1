@@ -1,0 +1,80 @@
+# Homework Unix operations
+# Save all files from part 1-6 in git directory
+git add NotFeature_R64-2-1_20150113.fasta 
+git add S288C_reference_sequence_R64-2-1_20150113.fsa 
+git add S288C_reference_sequence_RNA.fasta 
+git add gene_association_R64-2-1_20150113.sgd 
+git add orf_coding_all_R64-2-1_RNA.fasta 
+git add orf_coding_all_R64-2-1_20150113.fasta 
+git add orf_trans_all_R64-2-1_20150113.fasta 
+git add other_features_genomic_R64-2-1_20150113.fasta 
+git add rna_coding_R64-2-1_20150113.fasta 
+git add saccharomyces_cerevisiae_R64-2-1_20150113.gff 
+git commit -m "original files from data directory"
+
+# Task 1: How many genes on chromosome II 
+# Before stating to count the number of genes, a new directory was created for Task1 and the reference genome used for this task was copied into that directory.
+cp saccharomyces_cerevisiae_R64-2-1_20150113.gff /home/student10/data/Task1
+
+# The number of genes in chrII was then calculated using the following command:
+
+awk '$1=="chrII"' saccharomyces_cerevisiae_R64-2-1_20150113.gff | cut -f 3 | grep -c "gene" > numb_genes_chrII 
+
+# Results: 479 genes
+# The awk '$1=="chrII"' goes over each line in the input file, and checks if it matches our criterion col 1 = chrII. Using the awk command and checking a specific column for lines containing our word (here chrII) is done in order to only extract the chrII lines in this column, not in the entire document which could have been the case if ”grep chrII saccharo….” had been used instead. Taking this column, the column 3 containing information on what kind of file it was (gene, mRNA etc etc) was extracted with the <cut -f 3> command, extracting it to one column limited with only this data in seperate lines. The occurrence of the word ”gene” on a given line in this columns was then calculated using the <grep -c ”gene”> command.  
+
+
+# Task 2) GC-content in genome
+# Creating a Task2 directory, copying the reference sequence needed into it
+cp S288C_reference_sequence_R64-2-1_20150113.fsa /home/student10/data/Task2
+
+
+# To calculate the GC-content, all lines that did not start with a ”>” were selected, since these lines correspond to headers, rather than the actual genome we want to analyse. This was done using the invert grep function:
+
+grep -v ">" S288C_reference_sequence_R64-2-1_20150113.fsa > sequence_only_S288C 
+# where the -v tells grep to take ALL lines NOT starting with an ">" and put into the new sequence only file. 
+# From this file, the G/C content was then counted in several steps where the first one was:
+(grep -o G sequence_only_S288C > number_G_S288) | grep -o  C sequence_only_S288C > number_C_S288
+
+# which extracts all Gs from the entire file and put into the new "number_G_S288". The same is true for the C file. The -o takes all the matching parts of each line. The output will then print EACH matched value on a new line,  allowing the usage of the wc -l to estimate the occurrence of C/G respectively. This means one can calculate the content using the following command:
+(wc -l number_G_S288 > GC_content_S288C | wc -l number_C_S288 >> GC_content_S288C) | (wc -m sequence_only_S288C >> GC_content_S288C)
+
+# where the <wc -m sequence_only_S288C> calculates the total number of characters. The content is then shown by taking the cat:
+cat GC_content_S288C
+# Result: 
+2317100 number_G_S288
+2320576 number_C_S288
+12359733 sequence_only_S288C
+# which gives a total GC-content of 37.5% when one summarizes the number G and number C and divide by the total number characters. 
+
+# Task 3) 
+# A new Task3 directory was created. Then files were downloaded from internet and unzipped:
+wget https://downloads.yeastgenome.org/sequence/strains/Y55/Y55_SGD_2015_JRIF00000000/Y55_JRIF00000000_SGD_cds.fsa.gz
+
+gunzip Y55_JRIF00000000_SGD_cds.fsa.gz
+# Task 3a)
+# In the same way as before, a new file with only the sequence, and not the header was created using the "grep -v" command: 
+grep -v ">" Y55_JRIF00000000_SGD_cds.fsa > sequence_only_Y55
+
+# Following this, the GC content was also analyzed in the same way as for the S288C reference strain by first selecting the G and Cs using 
+(grep -o  G sequence_only_Y55 > number_G_Y55) | grep -o C sequence_only_Y55 > number_C_Y55
+
+# And the GC content can be counted along with the genome for the Y55 strain
+(wc -l number_C_Y55 > GC_content_Y55 | wc -l number_G_Y55 >> GC_content_Y55) | (wc -m sequence_only_Y55 >> GC_content_Y55)>
+<cat GC_content
+# Results: 
+1533622 number_C_Y55
+1658355 number_G_Y55
+8248278 sequence_only_Y55
+# Giving a 38.7% content. Noticable is that here, the total size is much smaller than for the S288C reference in Task 2. Also, the calculated GC-content is slightly higher than for the S288C reference. 
+
+ # Task 3b)
+ # The number of ORFs in the Y55 was calculated using the following command:
+grep -c ">" Y55_JRIF00000000_SGD_cds.fsa > counted_orfs_Y55
+ cat Y55_orf_number
+# Result: 5330
+
+# Calculated using the <grep -c ">" > command, since each ORF is preceeded by a ">" in the file. For the reference, the same approach was used;
+grep -c ">" orf_coding_all_R64-2-1_20150113.fasta > reference_orf_number 
+
+# Given a total of 6713 ORFs upon using cat reference_orf_number 
