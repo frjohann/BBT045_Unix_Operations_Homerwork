@@ -18,10 +18,11 @@ cp saccharomyces_cerevisiae_R64-2-1_20150113.gff /home/student10/data/Task1
 
 # The number of genes in chrII was then calculated using the following command:
 
-awk '$1=="chrII"' saccharomyces_cerevisiae_R64-2-1_20150113.gff | cut -f 3 | grep -c "gene" > numb_genes_chrII 
+awk '$1=="chrII"' saccharomyces_cerevisiae_R64-2-1_20150113.gff | cut -f 3 | grep -w "gene" > numb_genes_chrII 
 
-# Results: 479 genes
-# The awk '$1=="chrII"' goes over each line in the input file, and checks if it matches our criterion col 1 = chrII. Using the awk command and checking a specific column for lines containing our word (here chrII) is done in order to only extract the chrII lines in this column, not in the entire document which could have been the case if ”grep chrII saccharo….” had been used instead. Taking this column, the column 3 containing information on what kind of file it was (gene, mRNA etc etc) was extracted with the <cut -f 3> command, extracting it to one column limited with only this data in seperate lines. The occurrence of the word ”gene” on a given line in this columns was then calculated using the <grep -c ”gene”> command.  
+# Results: 456
+# The awk '$1=="chrII"' goes over each line in the input file, and checks if it matches our criterion col 1 = chrII. Using the awk command and checking a specific column for lines containing our word (here chrII) is done in order to only extract the chrII lines in this column, not in the entire document which could have been the case if ”grep chrII saccharo….” had been used instead. Taking this column, the column 3 containing information on what kind of file it was (gene, mRNA etc etc) was extracted with the <cut -f 3> command, extracting it to one column limited with only this data in seperate lines. The occurrence of the word ”gene” on a given line in this columns was then calculated using the <grep -w ”gene”> command, where the -w guarantees that only whole-word matches occur, not for instance including tRNA-genes etc. The same results could have been achieced using <...20150113.gff |awk '$3=="gene"'| wc -"> 
+instead of cut and grep.  
 
 
 # Task 2) GC-content in genome
@@ -30,6 +31,8 @@ cp S288C_reference_sequence_R64-2-1_20150113.fsa /home/student10/data/Task2
 
 
 # To calculate the GC-content, all lines that did not start with a ”>” were selected, since these lines correspond to headers, rather than the actual genome we want to analyse. This was done using the invert grep function:
+
+sed '/^>/!y/actg/ACTG/' S288C_reference_sequence_R64-2-1_20150113.fsa | grep -v ">" > sequence_only_S288C
 
 grep -v ">" S288C_reference_sequence_R64-2-1_20150113.fsa > sequence_only_S288C 
 # where the -v tells grep to take ALL lines NOT starting with an ">" and put into the new sequence only file. 
