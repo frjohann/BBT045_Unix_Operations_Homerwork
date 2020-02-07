@@ -1,0 +1,208 @@
+# Basic unix operations
+# Question 1
+
+# Download a reference yeast genome as compressed archive to the current directory
+wget https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_Current_Release.tgz
+ # downloaded the genome into directory
+# Results: ‘S288C_reference_genome_Current_Release.tgz’ saved [17657104/17657104]
+
+# Decompress the archive (creating new directory)
+tar -xzvf S288C_reference_genome_Current_Release.tgz >
+
+# Output: 
+# S288C_reference_genome_R64-2-1_20150113/
+# S288C_reference_genome_R64-2-1_20150113/rna_coding_R64-2-1_20150113.fasta
+# S288C_reference_genome_R64-2-1_20150113/NotFeature_R64-2-1_20150113.fasta
+# S288C_reference_genome_R64-2-1_20150113/orf_coding_all_R64-2-1_20150113.fasta
+# S288C_reference_genome_R64-2-1_20150113/other_features_genomic_R64-2-1_20150113.fasta
+# S288C_reference_genome_R64-2-1_20150113/S288C_reference_sequence_R64-2-1_20150113.fsa
+# S288C_reference_genome_R64-2-1_20150113/gene_association_R64-2-1_20150113.sgd
+# S288C_reference_genome_R64-2-1_20150113/orf_trans_all_R64-2-1_20150113.fasta
+# S288C_reference_genome_R64-2-1_20150113/saccharomyces_cerevisiae_R64-2-1_20150113.gff
+
+# Using the tar command the file was decompressed and a directory with different fasta files was created.
+
+
+ls
+# showing we have S288C_reference_genome_Current_Release.tgz
+# Results: S288C_reference_genome_R64-2-1_20150113 now in the directory
+
+# Check whats in the directory using ls
+ls S288C_reference_genome_R64-2-1_20150113
+
+# Results : 
+# NotFeature_R64-2-1_20150113.fasta
+# S288C_reference_sequence_R64-2-1_20150113.fsa
+# gene_association_R64-2-1_20150113.sgd
+# orf_coding_all_R64-2-1_20150113.fasta
+# orf_trans_all_R64-2-1_20150113.fasta
+# other_features_genomic_R64-2-1_20150113.fasta
+# rna_coding_R64-2-1_20150113.fasta
+# saccharomyces_cerevisiae_R64-2-1_20150113.gff
+
+# Check whats in the directory using ls -l
+ls -1 S288C_reference_genome_R64-2-1_20150113
+# Results: 
+# -rw-r--r-- 1 student10 students  3609953 Jan 13  2015 NotFeature_R64-2-1_20150113.fasta
+# -rw-r--r-- 1 student10 students 12361395 Jan 13  2015 S288C_reference_sequence_R64-2-1_20150113.fsa
+# -rw-r--r-- 1 student10 students 17633737 Jan 13  2015 gene_association_R64-2-1_20150113.sgd
+# -rw-r--r-- 1 student10 students 11491336 Jan 13  2015 orf_coding_all_R64-2-1_20150113.fasta
+# -rw-r--r-- 1 student10 students  5328465 Jan 13  2015 orf_trans_all_R64-2-1_20150113.fasta
+# -rw-r--r-- 1 student10 students   814529 Jan 13  2015 other_features_genomic_R64-2-1_20150113.fasta
+# -rw-r--r-- 1 student10 students   182615 Jan 13  2015 rna_coding_R64-2-1_20150113.fasta
+# -rw-r--r-- 1 student10 students 17967332 Jan 13  2015 saccharomyces_cerevisiae_R64-2-1_20150113.gff
+
+ # Now, the results are given in the form of a table instead
+ 
+# rename the reference to "data"
+mv S288C_reference_genome_R64-2-1_20150113 data
+ls
+# Results: now have a directory called data instead of the S288C_reference_genome_R64-2-1_20150113
+
+# check where we at
+pwd
+# Results: /home/student10
+
+# change to data directory + check whats in it
+cd data
+ls data
+# Results:  (moved it)
+# NotFeature_R64-2-1_20150113.fasta
+# S288C_reference_sequence_R64-2-1_20150113.fsa
+# gene_association_R64-2-1_20150113.sgd
+# orf_coding_all_R64-2-1_20150113.fasta
+# orf_trans_all_R64-2-1_20150113.fasta
+# other_features_genomic_R64-2-1_20150113.fasta
+# rna_coding_R64-2-1_20150113.fasta
+# saccharomyces_cerevisiae_R64-2-1_20150113.gff
+pwd 
+# Results: home/student10/data
+
+# write out big file
+less rna_coding_R64-2-1_20150113.fasta
+# Results: list of  nucleotide sequence and 
+# "snR18 SNR18 SGDID:S000007500, Chr I from 142367-142468, Genome Release 64-2-1,  snoRNA_gene, "C/D box small nucleolar RNA (snoRNA); # commonly referred to as U18; 
+# guides 2'-O-methylation of large subunit (LSU) rRNA at positions A649 and C650"
+
+# etc 
+
+# make new directory
+ mkdir results
+ touch results/counts.txt
+# Results: upon chanigng (cd) directory and running ls there is a file called counts
+
+# rename to include the date/time for the results
+ mv results results_2020_01_28
+ # Results: with dates in the original directory
+
+QUESTION 2
+# counting number of lines in the files
+wc -l orf_coding_all_R64-2-1_20150113.fasta
+# Results: 161265
+wc -l orf_trans_all_R64-2-1_20150113.fasta
+# Results: 60443
+
+# identification of number of genes
+grep -c ">" orf_coding_all_R64-2-1_20150113.fasta > /home/student10/results_2020_01_28/counts.txt
+
+# Result : no output, but check if correct and the number using cat
+cat counts.txt
+# Result: 6713 (no of lines with an > in the beginning after moving to the counts file and looking)
+
+# count number of tRNA genes (following less rna_coding... finding ordered like the tRNA_gene being stated in description)
+grep -c "tRNA_gene" rna_coding_R64-2-1_20150113.fasta >> /home/student10/results_2020_01_28/counts.txt 
+# Results: No output since saved into count
+
+# Checking results, making sure the files are as expected
+cat /home/student10/results_2020_01_28/counts.txt
+# Results:  (as expected in terms of numbers/counts done using grep before
+# 6713
+# 299
+
+# copy count file
+cp counts.txt counts.txt.orig
+
+
+QUESTION 3
+# gene experssion data (fold change)
+wget https://web.archive.org/web/20130211035221/http://www.cbs.dtu.dk/courses/27619/ex1.data
+
+# annotation
+wget https://web.archive.org/web/20170706124217/http://www.cbs.dtu.dk/courses/27619/ex1.acc
+
+# check whats new
+ls
+# Results: 
+# S288C_reference_genome_Current_Release.tgz  data     ex1.dat cd	    ex1.acc  results_2020_01_28
+
+# merge the experimentell data in ex1.data with the ex1.acc annotations
+cat ex1.dat
+# Result: Only levels, not whats what.
+# -1.9450	3.1706	-2.0536
+# 0.5615	-0.0029	-2.1845
+# 0.6284	0.9183	-2.9719
+# 1.0377	1.9856	-1.1401
+# 3.1217	6.8903	-4.3967
+# 0.6435	2.5546	-3.3403
+
+
+cat ex1.acc
+# Results: only names, no counts. 
+# G6PT_HUMAN	U01120.CDS.1
+# K6PP_HUMAN	D25328.CDS.1
+# K6PL_HUMAN	X15573.CDS.1
+# G6PI_HUMAN	K03515.CDS.1
+# G6PD_HUMAN	L44140.CDS.10
+
+
+paste ex1.acc ex1.dat
+# Result(top things): a combination of the two things we got from the acc and dat files
+# G6PT_HUMAN	U01120.CDS.1	-1.9450	3.1706	-2.0536
+# K6PP_HUMAN	D25328.CDS.1	0.5615	-0.0029	-2.1845
+# K6PL_HUMAN	X15573.CDS.1	0.6284	0.9183	-2.9719
+# G6PI_HUMAN	K03515.CDS.1	1.0377	1.9856	-1.1401
+# G6PD_HUMAN	L44140.CDS.10	3.1217	6.8903	-4.3967
+# K6PF_HUMAN	U24183.CDS.1	0.6435	2.5546	-3.3403
+# G6NT_HUMAN	M97347.CDS.1	0.7862	-0.7197	2.6020
+
+
+
+# Question 4:
+# download EggNogg list of orthologous groups in eukaryotes
+wget http://eggnog5.embl.de/download/eggnog_5.0/per_tax_level/2759/2759_members.tsv.gz
+
+#Decompressing file
+gunzip 2759_members.tsv.gz
+# Results: 2759_members.tsv
+
+# Check files
+less -S 2759_members.tv
+# Results: A file of 6 columns, the column starting with 5664 is list of protein IDs found in given group. Here, top 6 orthologs are shown.
+# 2759    2QPHS   6       5       5664.LmjF.32.0480,5671.XP_001467753.1,5679.XP_01
+# 2759    2QPHT   20      18      112098.XP_008618080.1,115417.EPrPW00000013346,15
+# 2759    2QPHU   121     66      102107.XP_008231578.1,102107.XP_008241302.1,1333
+# 2759    2QPHV   284     104     101028.EKJ76727,101162.XP_007682689.1,101162.XP_
+# 2759    2QPHW   139     65      102107.XP_008226743.1,102107.XP_008227668.1,1333
+# 2759    2QPHX   33      32      1005962.W1QBV1,1041607.K0KNT1,1071379.XP_0041826
+
+# Note: (|) = pipe redirector taking output of one command and feeding at input into the nextq
+
+# Filtering lines containing protein in organism
+grep "4891." 2759_members.tsv | cut -f 2 | sort > groups_hsapiens.txt
+# 4891. is the taxonomy ID for s.cerevisiae
+# Result : for humans but similar shown for S. cerevisiae
+# Gives column with genes names eg:
+# KOG4845
+# KOG4846
+# KOG4847
+# KOG4848
+# KOG4849
+# KOG4850
+# KOG4852
+
+
+# Sequencing processing
+sed '/^>/!y/ACGT/UGCA/' S288C_reference_sequence_R64-2-1_20150113.fsa >  orf_coding_all_R64-2-1_20150113.fasta
+
+# Result: everything but now with. Note!! The <sed '/^>/!y> is used to process the data, deselecting everything starting with a ">" using the </^>/!> command, and changing all As to Us, all C to G, all G to C and T to As (RNA form of strand).
+
