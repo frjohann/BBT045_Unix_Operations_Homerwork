@@ -34,21 +34,20 @@ cp S288C_reference_sequence_R64-2-1_20150113.fsa /home/student10/data/Task2
 
 sed '/^>/!y/actg/ACTG/' S288C_reference_sequence_R64-2-1_20150113.fsa | grep -v ">" > sequence_only_S288C
 
-grep -v ">" S288C_reference_sequence_R64-2-1_20150113.fsa > sequence_only_S288C 
-# where the -v tells grep to take ALL lines NOT starting with an ">" and put into the new sequence only file. 
+# where the -v tells grep to take ALL lines NOT starting with an ">" and put into the new sequence only file.  Using sed here, we also account for lower case letters by converting them to upper case. 
 # From this file, the G/C content was then counted in several steps where the first one was:
 (grep -o G sequence_only_S288C > number_G_S288) | grep -o  C sequence_only_S288C > number_C_S288
 
 # which extracts all Gs from the entire file and put into the new "number_G_S288". The same is true for the C file. The -o takes all the matching parts of each line. The output will then print EACH matched value on a new line,  allowing the usage of the wc -l to estimate the occurrence of C/G respectively. This means one can calculate the content using the following command:
-(wc -l number_G_S288 > GC_content_S288C | wc -l number_C_S288 >> GC_content_S288C) | (wc -m sequence_only_S288C >> GC_content_S288C)
+(wc -l number_G_S288 > GC_content_S288C | wc -l number_C_S288 >> GC_content_S288C) | (tr -d "\n" < sequence_only_S288C | wc -m >> GC_content_S288C)
 
-# where the <wc -m sequence_only_S288C> calculates the total number of characters. The content is then shown by taking the cat:
+# where the <tr -d "\n"> removes new line characters by excluting them in the total count, where the <wc -m > calculates the total number of characters. The content is then shown by taking the cat:
 cat GC_content_S288C
 # Result: 
 2317100 number_G_S288
 2320576 number_C_S288
-12359733 sequence_only_S288C
-# which gives a total GC-content of 37.5% when one summarizes the number G and number C and divide by the total number characters. 
+12157105 sequence_only_S288C
+# which gives a total GC-content of 38.1% when one summarizes the number G and number C and divide by the total number characters. 
 
 # Task 3) 
 # A new Task3 directory was created. Then files were downloaded from internet and unzipped:
@@ -56,20 +55,20 @@ wget https://downloads.yeastgenome.org/sequence/strains/Y55/Y55_SGD_2015_JRIF000
 
 gunzip Y55_JRIF00000000_SGD_cds.fsa.gz
 # Task 3a)
-# In the same way as before, a new file with only the sequence, and not the header was created using the "grep -v" command: 
-grep -v ">" Y55_JRIF00000000_SGD_cds.fsa > sequence_only_Y55
+# In the same way as before, a new file with only the sequence, and not the header was created using the <sed '/^>/!y/actg/ACTG/'> command to convert all lower cases to upper cases and the <grep -v> to only select bases, not headers. 
+sed '/^>/!y/actg/ACTG/' ~/data/Task3/Y55_JRIF00000000_SGD_cds.fsa | grep -v ">" > sequence_only_Y55
 
 # Following this, the GC content was also analyzed in the same way as for the S288C reference strain by first selecting the G and Cs using 
 (grep -o  G sequence_only_Y55 > number_G_Y55) | grep -o C sequence_only_Y55 > number_C_Y55
 
-# And the GC content can be counted along with the genome for the Y55 strain
-(wc -l number_C_Y55 > GC_content_Y55 | wc -l number_G_Y55 >> GC_content_Y55) | (wc -m sequence_only_Y55 >> GC_content_Y55)>
-<cat GC_content
+# And the GC content can be counted along with the genome for the Y55 strain, removing newline characters in the reference genome using <tr -d "\n" >. 
+(wc -l number_C_Y55 > GC_content_Y55 | wc -l number_G_Y55 >> GC_content_Y55) | (tr -d "\n" sequence_only_Y55| wc -m >> GC_content_Y55)
+
 # Results: 
 1533622 number_C_Y55
 1658355 number_G_Y55
-8248278 sequence_only_Y55
-# Giving a 38.7% content. Noticable is that here, the total size is much smaller than for the S288C reference in Task 2. Also, the calculated GC-content is slightly higher than for the S288C reference. 
+8078658 sequence_only_Y55
+# Giving a 39.5% content. Noticable is that here, the total size is much smaller than for the S288C reference in Task 2. Also, the calculated GC-content is slightly higher than for the S288C reference. 
 
  # Task 3b)
  # The number of ORFs in the Y55 was calculated using the following command:
